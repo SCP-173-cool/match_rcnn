@@ -30,5 +30,4 @@ class BalloonConfig(Config):
 
 
 config = BalloonConfig()
-
 model = modellib.MaskRCNN(mode="training", config=config, model_dir="./logs/")

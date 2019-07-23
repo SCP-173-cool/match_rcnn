@@ -1,11 +1,10 @@
+# -*- coding: utf-8 -*-
 """
-Mask R-CNN
-The main Mask R-CNN model implementation.
+Created on Sun Jul 21 21:15:50 2019
 
-Copyright (c) 2017 Matterport, Inc.
-Licensed under the MIT License (see LICENSE for details)
-Written by Waleed Abdulla
+@author: loktarxiao
 """
+
 
 import os
 import random
@@ -1853,7 +1852,8 @@ class MaskRCNN():
 
         # Inputs
         input_image = KL.Input(
-            shape=[None, None, config.IMAGE_SHAPE[2]], name="input_image")
+            #shape=[None, None, config.IMAGE_SHAPE[2]], name="input_image")
+            shape=[224, 224, config.IMAGE_SHAPE[2]], name="input_image")
         input_image_meta = KL.Input(shape=[config.IMAGE_META_SIZE],
                                     name="input_image_meta")
         if mode == "training":
@@ -2058,7 +2058,7 @@ class MaskRCNN():
 
         # Add multi-GPU support.
         if config.GPU_COUNT > 1:
-            from mrcnn.parallel_model import ParallelModel
+            from lib.parallel_model import ParallelModel
             model = ParallelModel(model, config.GPU_COUNT)
 
         return model
