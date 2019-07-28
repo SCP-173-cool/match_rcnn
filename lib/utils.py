@@ -513,6 +513,29 @@ def resize_mask(mask, scale, padding, crop=None):
         mask = np.pad(mask, padding, mode='constant', constant_values=0)
     return mask
 
+ def resize_keypoints(keypoints, scale, padding, crop=None):
+    """
+    """
+    points_lst = []
+    for idx in range(keypoints.shape[1]):
+        keypoint = keypoints[:, idx]
+        landmark = keypoint.reshape(-1, 3)
+        landmark[:, :2] = landmark[:, :2] * scale
+        
+        if crop is not None:
+            y, x, h, w = crop
+            landmark[:, 0] = landmark[:, 0] - y
+            landmark[:, 1] = landmark[:, 1] - x
+
+        if padding is not None:
+            (x1, x2), (y1, y2), _ = padding
+            landmark[:, 0] = landmark[:, 0] + x1
+            landmark[:, 1] = landmark[:, 1] + y1
+
+        points_lst.append(landmark.reshape(-1))
+    
+    return np.stack(points_lst, axis=1)
+
 
 def minimize_mask(bbox, mask, mini_shape):
     """Resize masks to a smaller version to reduce memory load.
