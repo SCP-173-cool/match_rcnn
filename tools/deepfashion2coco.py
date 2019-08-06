@@ -111,12 +111,12 @@ dataset['categories'].append({
     'skeleton': []
 })
 
-num_images = 10000
+num_images = 30000
 
 sub_index = 0 # the index of ground truth instance
 for num in tqdm(range(1, num_images+1)):
-    json_name = '/home/loktar/Projects/dataset/train/annos/' + str(num).zfill(6)+'.json'
-    image_name = '/home/loktar/Projects/dataset/train/image/' + str(num).zfill(6)+'.jpg'
+    json_name = '/home/asa/projects/datasets/validation/annos/' + str(num).zfill(6)+'.json'
+    image_name = '/home/asa/projects/datasets/validation/image/' + str(num).zfill(6)+'.jpg'
 
     if (num>=0):
         imag = Image.open(image_name)
@@ -241,7 +241,7 @@ for num in tqdm(range(1, num_images+1)):
                     })
 
 
-json_name = './train_samples.json'
+json_name = './valid.json'
 with open(json_name, 'w') as f:
   json.dump(dataset, f)
 

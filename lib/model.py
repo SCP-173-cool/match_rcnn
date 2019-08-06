@@ -1211,7 +1211,6 @@ def load_image_gt(dataset, config, image_id, augmentation=None, augment=None,
     mask, class_ids = dataset.load_mask(image_id)
     keypoints, class_ids = dataset.load_keypoint(image_id)
     original_shape = image.shape
-    print(image.shape)
     image, window, scale, padding, crop = utils.resize_image(
         image,
         min_dim=config.IMAGE_MIN_DIM,
@@ -1221,7 +1220,6 @@ def load_image_gt(dataset, config, image_id, augmentation=None, augment=None,
     mask = utils.resize_mask(mask, scale, padding, crop)
     keypoints = utils.resize_keypoints(keypoints, scale, padding, crop)
 
-    print(image.shape)
     # Augmentation
     # This requires the imgaug lib (https://github.com/aleju/imgaug)
     if augmentation:
@@ -1783,7 +1781,7 @@ def data_generator(dataset, config, shuffle=True, augment=False, augmentation=No
             # Batch full?
             if b >= batch_size:
                 inputs = [batch_images, batch_image_meta, batch_rpn_match, batch_rpn_bbox,
-                          batch_gt_class_ids, batch_gt_boxes, batch_gt_masks, batch_keypoints]
+                          batch_gt_class_ids, batch_gt_boxes, batch_gt_masks]
                 outputs = []
 
                 if random_rois:

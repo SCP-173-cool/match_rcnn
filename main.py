@@ -14,6 +14,7 @@ import numpy as np
 from pycocotools.coco import COCO
 from pycocotools import mask as maskUtils
 from lib.config import Config
+from lib.model import MaskRCNN
 from lib import utils
 
 class DeepFashion2Config(Config):
@@ -26,16 +27,20 @@ class DeepFashion2Config(Config):
 
     # We use a GPU with 12GB memory, which can fit two images.
     # Adjust down if you use a smaller GPU.
-    IMAGES_PER_GPU = 13
+    IMAGES_PER_GPU = 2
 
     # Uncomment to train on 8 GPUs (default is 1)
-    GPU_COUNT = 1
+    GPU_COUNT = 4
 
     # Number of classes (including background)
     NUM_CLASSES = 1 + 13  # COCO has 80 classes
     
     USE_MINI_MASK = True
 
+    train_img_dir = "/home/asa/projects/datasets/train/image"
+    train_json_path = "/home/asa/projects/match_rcnn/tools/train.json"
+    valid_img_dir = "/home/asa/projects/datasets/validation/image"
+    valid_json_path = "/home/asa/projects/match_rcnn/tools/valid.json"
 
 
 ############################################################
@@ -191,23 +196,117 @@ class DeepFashion2Dataset(utils.Dataset):
         return m
 
 
+def train(model, config):
+    """
+    """
+    dataset_train = DeepFashion2Dataset()
+    dataset_train.load_coco(config.train_img_dir, config.train_json_path)
+    dataset_train.prepare()
+
+    dataset_valid = DeepFashion2Dataset()
+    dataset_valid.load_coco(config.valid_img_dir, config.valid_json_path)
+    dataset_valid.prepare()
+
+    model.train(dataset_train, dataset_valid,
+                learning_rate=config.LEARNING_RATE,
+                epochs=30,
+                layers='heads')
+
+
 if __name__ == "__main__":
-    img_dir = "/home/loktar/Projects/dataset/train/image"
-    json_path = "/home/loktar/Projects/match_rcnn/tools/train_samples.json"
+    ROOT_DIR = os.path.abspath("./")
+    DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
+    COCO_WEIGHTS_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
+    import argparse
 
-    image_id = 13
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        description='Train Match R-CNN for DeepFashion.')
+    parser.add_argument("command",
+                        metavar="<command>",
+                        help="'train' or 'splash'")
+    parser.add_argument('--weights', required=True,
+                        metavar="/path/to/weights.h5",
+                        help="Path to weights .h5 file or 'coco'")
+    parser.add_argument('--logs', required=False,
+                        default=DEFAULT_LOGS_DIR,
+                        metavar="/path/to/logs/",
+                        help='Logs and checkpoints directory (default=logs/)')
+    parser.add_argument('--image', required=False,
+                        metavar="path or URL to image",
+                        help='Image to apply the color splash effect on')
+    parser.add_argument('--video', required=False,
+                        metavar="path or URL to video",
+                        help='Video to apply the color splash effect on')
+    args = parser.parse_args()
 
-    dataset = DeepFashion2Dataset()
-    coco = dataset.load_coco(img_dir, json_path, return_coco=True)
-    dataset.prepare()
-    
-    image = dataset.load_image(image_id)
-    mask, class_ids = dataset.load_mask(image_id)
-    keypoints, class_ids = dataset.load_keypoint(image_id)
-    
+    """
+    # Validate arguments
+    if args.command == "train":
+        assert args.dataset, "Argument --dataset is required for training"
+    elif args.command == "splash":
+        assert args.image or args.video,\
+               "Provide --image or --video to apply color splash"
+    """
 
-    from lib.model import data_generator
-    config = DeepFashion2Config()
-    generator = data_generator(dataset, config, shuffle=True,
-                               detection_targets=True, batch_size=23)
-    batch = next(generator)
+    print("Weights: ", args.weights)
+    print("Logs: ", args.logs)
+
+
+    # Configurations
+    if args.command == "train":
+        config = DeepFashion2Config()
+    else:
+        class InferenceConfig(DeepFashion2Config):
+            # Set batch size to 1 since we'll be running inference on
+            # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
+            GPU_COUNT = 1
+            IMAGES_PER_GPU = 1
+        config = InferenceConfig()
+    config.display()
+
+    # Create model
+    if args.command == "train":
+        model = MaskRCNN(mode="training", config=config,
+                                  model_dir=args.logs)
+    else:
+        model = MaskRCNN(mode="inference", config=config,
+                                  model_dir=args.logs)
+
+    # Select weights file to load
+    if args.weights.lower() == "coco":
+        weights_path = COCO_WEIGHTS_PATH
+        # Download weights file
+        if not os.path.exists(weights_path):
+            utils.download_trained_weights(weights_path)
+    elif args.weights.lower() == "last":
+        # Find last trained weights
+        weights_path = model.find_last()
+    elif args.weights.lower() == "imagenet":
+        # Start from ImageNet trained weights
+        weights_path = model.get_imagenet_weights()
+    else:
+        weights_path = args.weights
+
+    # Load weights
+    print("Loading weights ", weights_path)
+    if args.weights.lower() == "coco":
+        # Exclude the last layers because they require a matching
+        # number of classes
+        model.load_weights(weights_path, by_name=True, exclude=[
+            "mrcnn_class_logits", "mrcnn_bbox_fc",
+            "mrcnn_bbox", "mrcnn_mask"])
+    else:
+        model.load_weights(weights_path, by_name=True)
+
+    # Train or evaluate
+    if args.command == "train":
+        train(model, config)
+    elif args.command == "splash":
+        detect_and_color_splash(model, image_path=args.image,
+                                video_path=args.video)
+    else:
+        print("'{}' is not recognized. "
+              "Use 'train' or 'splash'".format(args.command)) 
+
+

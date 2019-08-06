@@ -513,7 +513,7 @@ def resize_mask(mask, scale, padding, crop=None):
         mask = np.pad(mask, padding, mode='constant', constant_values=0)
     return mask
 
- def resize_keypoints(keypoints, scale, padding, crop=None):
+def resize_keypoints(keypoints, scale, padding, crop=None):
     """
     """
     points_lst = []
