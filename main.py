@@ -27,20 +27,20 @@ class DeepFashion2Config(Config):
 
     # We use a GPU with 12GB memory, which can fit two images.
     # Adjust down if you use a smaller GPU.
-    IMAGES_PER_GPU = 2
+    IMAGES_PER_GPU = 1
 
     # Uncomment to train on 8 GPUs (default is 1)
-    GPU_COUNT = 4
+    GPU_COUNT = 1
 
     # Number of classes (including background)
     NUM_CLASSES = 1 + 13  # COCO has 80 classes
     
     USE_MINI_MASK = True
 
-    train_img_dir = "/home/asa/projects/datasets/train/image"
-    train_json_path = "/home/asa/projects/match_rcnn/tools/train.json"
-    valid_img_dir = "/home/asa/projects/datasets/validation/image"
-    valid_json_path = "/home/asa/projects/match_rcnn/tools/valid.json"
+    train_img_dir = "/content/match_rcnn/dataset/train/image/"
+    train_json_path = "/content/match_rcnn/dataset/train/train.json"
+    valid_img_dir = "/content/match_rcnn/dataset/validation/image/"
+    valid_json_path = "/content/match_rcnn/dataset/validation/validation.json"
 
 
 ############################################################
