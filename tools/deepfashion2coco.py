@@ -112,10 +112,10 @@ dataset['categories'].append({
 })
 
 # num images for validation json
-num_images = 30000
+num_images = 32153
 
 # num images for train json
-#num_images = 191000
+#num_images = 191961
 
 sub_index = 0 # the index of ground truth instance
 for num in tqdm(range(1, num_images+1)):
