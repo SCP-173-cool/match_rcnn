@@ -109,6 +109,3 @@ for filename in os.listdir(input_image_dir):
         save_masked_instances(output_image_dir, img, rois, masks, r['class_ids'], ['bg'] + label_names, r['scores'],
                               title='image_id',
                               figsize=(16, 16))
-
-        display_instances(img, rois, masks, r['class_ids'], ['bg'] + label_names, r['scores'], title='image_id',
-                               figsize=(16, 16))
