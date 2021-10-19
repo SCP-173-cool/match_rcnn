@@ -307,6 +307,8 @@ if __name__ == "__main__":
                                 video_path=args.video)
     else:
         print("'{}' is not recognized. "
-              "Use 'train' or 'splash'".format(args.command)) 
+              "Use 'train' or 'splash'".format(args.command))
+
+
 
 
