@@ -108,4 +108,4 @@ for filename in os.listdir(input_image_dir):
                                figsize=(16, 16))
 
         #display_instances_main(img, rois, masks, r['class_ids'], ['bg'] + label_names, r['scores'], title='image_id',
-                               figsize=(16, 16))
+        #                       figsize=(16, 16))
