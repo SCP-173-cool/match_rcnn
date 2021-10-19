@@ -4,7 +4,7 @@ import sys
 from mrcnn import utils
 from mrcnn import model as modellib
 from mrcnn.config import Config
-import mrcnn.visualize
+from mrcnn.visualize import *
 import mrcnn.model as modellib
 from mrcnn.model import MaskRCNN
 import uuid
@@ -16,6 +16,8 @@ import numpy as np
 import shutil
 import random
 import argparse
+from skimage import io
+import uuid
 
 NUM_CATS = 46
 IMAGE_SIZE = 512
