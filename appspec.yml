@@ -1,0 +1,10 @@
+{
+  "version": 0.0,
+  "os": "linux",
+  "files": [
+    {
+      "source": "source-file-location",
+      "destination": "destination-file-location"
+    }
+  ]
+}
