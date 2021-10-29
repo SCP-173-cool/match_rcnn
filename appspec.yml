@@ -3,7 +3,7 @@
   "os": "linux",
   "files": [
     {
-      "source": "/FGVC6_1.ipunb",
+      "source": "/tools",
       "destination": "/match_rcnn_2"
     }
   ]
