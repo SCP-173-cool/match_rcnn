@@ -1,0 +1,14 @@
+version: '1'
+phases:
+  install:
+    commands:
+      - echo "install begin"
+  pre_build:
+    commands:
+      - echo "pre_build begin"
+  build:
+    commands:
+      - echo "build begin"
+  post_build:
+    commands:
+      - echo "post_build begin"
