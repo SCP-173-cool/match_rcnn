@@ -1,14 +1,20 @@
-version: "1.1"
+version: 0.2
+
 phases:
   install:
     commands:
-      - echo "install begin"
-  pre_build:
-    commands:
-      - echo "pre_build begin"
+      - npm install
   build:
     commands:
-      - echo "build begin"
-  post_build:
-    commands:
-      - echo "post_build begin"
+      - npm test
+artifacts:
+  files:
+    - '**/*'
+
+
+
+
+
+
+
+
