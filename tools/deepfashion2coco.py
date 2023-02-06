@@ -111,12 +111,28 @@ dataset['categories'].append({
     'skeleton': []
 })
 
-num_images = 30000
+# num images for validation json
+num_images = 32153
+
+# num images for train json
+#num_images = 191961
 
 sub_index = 0 # the index of ground truth instance
 for num in tqdm(range(1, num_images+1)):
-    json_name = '/home/asa/projects/datasets/validation/annos/' + str(num).zfill(6)+'.json'
-    image_name = '/home/asa/projects/datasets/validation/image/' + str(num).zfill(6)+'.jpg'
+    """
+    original path from author
+    
+    #json_name = '/home/asa/projects/datasets/validation/annos/' + str(num).zfill(6)+'.json'
+    #image_name = '/home/asa/projects/datasets/validation/image/' + str(num).zfill(6)+'.jpg'
+    """
+
+    # custom path for validation json
+    json_name = '/content/match_rcnn/dataset/validation/annos/' + str(num).zfill(6) + '.json'
+    image_name = '/content/match_rcnn/dataset/validation/image/' + str(num).zfill(6) + '.jpg'
+
+    # custom path for train json
+    # json_name = '/content/match_rcnn/dataset/train/annos/' + str(num).zfill(6) + '.json'
+    # image_name = '/content/match_rcnn/dataset/train/image/' + str(num).zfill(6) + '.jpg'
 
     if (num>=0):
         imag = Image.open(image_name)
@@ -240,8 +256,16 @@ for num in tqdm(range(1, num_images+1)):
                         'segmentation': seg,
                     })
 
-
+"""
+original path from author
 json_name = './valid.json'
+"""
+
+# custom path for save validation json
+json_name = '/content/match_rcnn/dataset/validation/validation.json'
+
+# custom path for save train json
+# json_name = '/content/match_rcnn/dataset/train/train.json'
 with open(json_name, 'w') as f:
   json.dump(dataset, f)
 

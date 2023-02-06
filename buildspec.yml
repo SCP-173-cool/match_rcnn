@@ -1,0 +1,20 @@
+version: 0.3
+
+phases:
+  install:
+    commands:
+
+  build:
+    commands:
+
+artifacts:
+  files:
+    - '**/*'
+
+
+
+
+
+
+
+
